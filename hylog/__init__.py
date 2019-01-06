@@ -81,3 +81,31 @@ def register_commands(app):
             click.echo('删除表.')
         db.create_all()
         click.echo('数据库初始化成功')
+
+    @app.cli.command()
+    @click.option('--category', default=10, help='分类目录个数，默认为10个.')
+    @click.option('--post', default=50, help='日志篇数，默认为50篇.')
+    @click.option('--comment', default=300, help='留言评论数，默认为300条.')
+    def forge(category, post, comment):
+        """创建测试数据"""
+        from hylog.fakes import fake_admin, fake_categories, fake_posts, fake_comments, fake_links
+
+        db.drop_all()
+        db.create_all()
+
+        click.echo('创建管理员...')
+        fake_admin()
+
+        click.echo(f'创建{category}个分类目录...')
+        fake_categories(category)
+
+        click.echo(f'创建{post}篇日志...')
+        fake_posts(post)
+
+        click.echo(f'创建{comment}条留言...')
+        fake_comments(comment)
+
+        click.echo('生成链接...')
+        fake_links()
+
+        click.echo('测试数据生成完成.')

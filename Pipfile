@@ -12,6 +12,12 @@ bootstrap-flask = "*"
 flask-mail = "*"
 flask-moment = "*"
 flask-ckeditor = "*"
+faker = "*"
+python-dotenv = "*"
+flask-wtf = "*"
+flask-login = "*"
+flask-debugtoolbar = "*"
+flask-migrate = "*"
 
 [requires]
 python_version = "3.7"

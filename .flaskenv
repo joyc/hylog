@@ -1,0 +1,2 @@
+FLASK_APP=hylog
+FLASK_ENV=development
