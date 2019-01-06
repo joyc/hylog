@@ -16,7 +16,7 @@ def fake_admin():
         name='嗨森',
         about='白天是个邮递员，晚上是个码农，养了条叫斯坦森的狗...'
     )
-    admin.set_password('admin123')
+    # admin.set_password('admin123')
     db.session.add(admin)
     db.session.commit()
 
@@ -67,7 +67,7 @@ def fake_comments(count=300):
             author=fake.name(),
             email=fake.email(),
             site=fake.url(),
-            body=fake.sentence(),
+            content=fake.sentence(),
             timestamp=fake.date_time_this_year(),
             reviewed=False,
             post=Post.query.get(random.randint(1, Post.query.count()))
@@ -78,9 +78,9 @@ def fake_comments(count=300):
             author='嗨森',
             email='hython@hython.com',
             site='hython.com',
-            body=fake.sentence(),
+            content=fake.sentence(),
             timestamp=fake.date_time_this_year(),
-            from_admin=True,
+            # from_admin=True,
             reviewed=True,
             post=Post.query.get(random.randint(1, Post.query.count()))
         )
@@ -92,7 +92,7 @@ def fake_comments(count=300):
             author=fake.name(),
             email=fake.email(),
             site=fake.url(),
-            body=fake.sentence(),
+            content=fake.sentence(),
             timestamp=fake.date_time_this_year(),
             reviewed=True,
             replied=Comment.query.get(random.randint(1, Comment.query.count())),
