@@ -1,7 +1,6 @@
 import os
 import click
 from flask import Flask, render_template
-from flask_sqlalchemy import SQLAlchemy
 
 from hylog.blueprints.admin import admin_bp
 from hylog.blueprints.auth import auth_bp
@@ -27,9 +26,6 @@ def create_app(config_name=None):
     register_shell_context(app)     # 注册shell上下文处理函数
     register_template_context(app)  # 注册模板上下文处理函数
     return app
-
-
-db = SQLAlchemy(app)
 
 
 def register_logging(app):
@@ -65,33 +61,23 @@ def register_errors(app):
     def bad_request(e):
         return render_template('errors/400.html'), 400
 
+    @app.errorhandler(404)
+    def page_not_found(e):
+        return render_template('errors/404.html'), 404
+
+    @app.errorhandler(500)
+    def internal_server_error(e):
+        return render_template('errors/500.html'), 500
+
 
 def register_commands(app):
-    pass
-
-
-@app.errorhandler(400)
-def bad_request(e):
-    return render_template('errors/400.html'), 400
-
-
-@app.errorhandler(404)
-def page_not_found(e):
-    return render_template('errors/404.html'), 404
-
-
-@app.errorhandler(500)
-def internal_server_error(e):
-    return render_template('errors/500.html'), 500
-
-
-@app.cli.command()
-@click.option('--drop', is_flag=True, help='先删除后创建')
-def initdb(drop):
-    """初始化数据库"""
-    if drop:
-        click.confirm('此操作会删除现有数据库，是否继续?', abort=True)
-        db.drop_all()
-        click.echo('删除表.')
-    db.create_all()
-    click.echo('数据库初始化成功')
+    @app.cli.command()
+    @click.option('--drop', is_flag=True, help='先删除后创建')
+    def initdb(drop):
+        """初始化数据库"""
+        if drop:
+            click.confirm('此操作会删除现有数据库，是否继续?', abort=True)
+            db.drop_all()
+            click.echo('删除表.')
+        db.create_all()
+        click.echo('数据库初始化成功')
