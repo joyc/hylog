@@ -14,6 +14,15 @@ class LoginForm(FlaskForm):
     submit = SubmitField('登陆')
 
 
+class SettingForm(FlaskForm):
+    """设定表单"""
+    name = StringField('姓名', validators=[DataRequired(), Length(1, 70)])
+    blog_title = StringField('博客标题', validators=[DataRequired(), Length(1, 60)])
+    blog_sub_title = StringField('博客副标题', validators=[DataRequired(), Length(1, 100)])
+    about = CKEditorField('About Page', validators=[DataRequired()])
+    submit= SubmitField()
+
+
 class PostForm(FlaskForm):
     """文章表单"""
     title = StringField('标题', validators=[DataRequired(), Length(1, 60)])
@@ -51,3 +60,10 @@ class AdminCommentForm(CommentForm):
     author = HiddenField()
     email = HiddenField()
     site = HiddenField()
+
+
+class LinkForm(FlaskForm):
+    """链接表单"""
+    name = StringField('名称', validators=[DataRequired(), Length(1, 30)])
+    url = StringField('URL', validators=[DataRequired(), URL(), Length(1, 255)])
+    submit = SubmitField()
