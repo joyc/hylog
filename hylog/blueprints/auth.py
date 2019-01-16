@@ -1,13 +1,17 @@
-from flask import Blueprint
+from flask import render_template, Blueprint
+
+from hylog.forms import LoginForm
+from hylog.utils import redirect_back
 
 auth_bp = Blueprint('auth', __name__)
 
 
-@auth_bp.route('/login')
+@auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
-    return '登陆页面'
+    form = LoginForm()
+    return render_template('auth/login.html', form=form)
 
 
 @auth_bp.route('/logout')
 def logout():
-    return '登出页面'
+    return redirect_back()
