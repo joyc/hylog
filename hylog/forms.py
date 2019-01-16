@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, ValidationError
-from wtforms.validators import DataRequired, Length
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, SelectField, ValidationError, HiddenField
+from wtforms.validators import DataRequired, Length, Email, Optional, URL
 from flask_ckeditor import CKEditorField
 
 from hylog.models import Category
@@ -35,3 +35,19 @@ class CategoryForm(FlaskForm):
     def validate_name(self, field):
         if Category.query.filter_by(name=field.data).first():
             raise ValidationError('该分类名已被使用，请换一个试试。')
+
+
+class CommentForm(FlaskForm):
+    """评论表单"""
+    author = StringField('姓名', validators=[DataRequired(), Length(1, 30)])
+    email = StringField('邮件', validators=[DataRequired(), Email(), Length(1, 254)])
+    site = StringField('网站', validators=[Optional(), URL(), Length(0, 255)])
+    body = TextAreaField('内容', validators=[DataRequired()])
+    submit = SubmitField()
+
+
+class AdminCommentForm(CommentForm):
+    """管理员用留言表单"""
+    author = HiddenField()
+    email = HiddenField()
+    site = HiddenField()
