@@ -11,7 +11,7 @@ else:
     prefix = 'sqlite:////'
 
 
-class BaseConfig:
+class BaseConfig(object):
     SECRET_KEY = os.getenv('SECRET_KEY', 'dev key')
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
@@ -40,7 +40,7 @@ class TestingConfig(BaseConfig):
 
 
 class ProductionConfig(BaseConfig):
-    SQLALCHEMY_DATABASE_URI = prefix + os.path.join(basedir, 'data.db')
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', prefix + os.path.join(basedir, 'data.db'))
 
 
 config = {
