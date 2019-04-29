@@ -37,7 +37,7 @@ def register_logging(app):
 def register_extensions(app):
     """扩展的实例化放在extensions中"""
     bootstrap.init_app(app)
-    db.init_app(app)
+    db.init_app(app)    # 其他文件调用需要手动实例化并激活上下文
     moment.init_app(app)
     ckeditor.init_app(app)
     mail.init_app(app)
@@ -50,12 +50,14 @@ def register_blueprints(app):
 
 
 def register_shell_context(app):
+    """定义click命令shell上下文，0.11v后"""
     @app.shell_context_processor
     def make_shell_context():
         return dict(db=db)
 
 
 def register_template_context(app):
+    """定义模板上下文处理函数"""
     @app.context_processor
     def make_template_context():
         admin = Admin.query.first()
@@ -94,7 +96,7 @@ def register_commands(app):
     @click.option('--post', default=50, help='日志篇数，默认为50篇.')
     @click.option('--comment', default=300, help='留言评论数，默认为300条.')
     def forge(category, post, comment):
-        """创建测试数据"""
+        """按顺序创建测试数据"""
         from hylog.fakes import fake_admin, fake_categories, fake_posts, fake_comments, fake_links
 
         db.drop_all()

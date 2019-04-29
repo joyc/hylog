@@ -40,7 +40,7 @@ class Comment(db.Model):
     form_admin = db.Column(db.Boolean, default=False)
     reviewed = db.Column(db.Boolean, default=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
-
+    # 邻接列表关系创建（评论回复）
     replied_id = db.Column(db.Integer, db.ForeignKey('comment.id'))
     replied = db.relationship('Comment', back_populates='replies', remote_side=[id])
     replies = db.relationship('Comment', back_populates='replied', cascade='all, delete-orphan')

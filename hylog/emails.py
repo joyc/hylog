@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    邮件发送函数
+邮件发送函数
 """
 from threading import Thread
 

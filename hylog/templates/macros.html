@@ -1,5 +1,23 @@
+{# 导航按钮激活样式，使用bootstrap-flask自带后弃用 #}
 {% macro nav_link(endpoint, text) -%}
 <li class="nav-item {% if request.endpoint and request.endpoint == endpoint %} active {% endif %}">
     <a href="{{ url_for(endpoint, **kwargs) }}" class="nav-link">{{ text }}</a>
 </li>
 {%- endmacro %}
+{# 分页设置 #}
+{% macro pager(pagination, fragment='') %}
+<nav aria-label="Page navigation">
+    <ul class="pagination">
+        <li class="page-item {% if not pagination.has_prev %}disabled{% endif %}">
+            <a class="page-link" href="{{ url_for(request.endpoint, page=pagination.prev_num, **kwargs) + fragment if pagination.has_prev else '#'}}">
+                <span aria-hidden="true">&larr;</span> Newer
+            </a>
+        </li>
+        <li class="page-item {% if not pagination.has_next %}disabled{% endif %}">
+            <a class="page-link" href="{{ url_for(request.endpoint, page=pagination.next_num, **kwargs) + fragment if pagination.has_next else '#'}}">
+                Older <span aria-hidden="true">&rarr;</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+{% endmacro %}
