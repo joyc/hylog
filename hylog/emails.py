@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+"""
+    邮件发送函数
+"""
 from threading import Thread
 
 from flask import current_app, url_for

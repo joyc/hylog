@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+"""
+使用类管理配置文件
+"""
 import os
 import sys
 
@@ -12,7 +16,7 @@ else:
 
 
 class BaseConfig(object):
-    SECRET_KEY = os.getenv('SECRET_KEY', 'dev key')
+    SECRET_KEY = os.getenv('SECRET_KEY', 'dev key') # os.urandom
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 

@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+"""
+    辅助函数
+"""
 try:
     from urlparse import urlparse, urljoin
 except ImportError:

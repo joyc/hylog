@@ -1,5 +1,7 @@
-# 存储扩展实例化
-
+# -*- coding: utf-8 -*-
+"""
+存储扩展实例化
+"""
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail

@@ -13,6 +13,7 @@ basedir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 
 
 def create_app(config_name=None):
+    """程序实例工厂函数"""
     if config_name is None:
         config_name = os.getenv('FLASK_CONFIG', 'development')
 
@@ -34,7 +35,7 @@ def register_logging(app):
 
 
 def register_extensions(app):
-    """扩展的实例化放在extensions.py中"""
+    """扩展的实例化放在extensions中"""
     bootstrap.init_app(app)
     db.init_app(app)
     moment.init_app(app)

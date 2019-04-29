@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+"""
+    虚拟测试数据生成函数
+"""
 import random
 
 from faker import Faker
