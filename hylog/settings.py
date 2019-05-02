@@ -31,6 +31,9 @@ class BaseConfig(object):
     HYLOG_POST_PER_PAGE = 10
     HYLOG_MANAGE_POST_PER_PAGE = 15
     HYLOG_COMMENT_PER_PAGE = 15
+    # ('theme name', 'display name')
+    HYLOG_THEMES = {'perfect_blue': 'Perfect Blue', 'black_swan': 'Black Swan'}
+    HYLOG_SLOW_QUERY_THRESHOLD = 1
 
 
 class DevelopmentConfig(BaseConfig):

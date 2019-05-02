@@ -19,21 +19,21 @@ class SettingForm(FlaskForm):
     name = StringField('姓名', validators=[DataRequired(), Length(1, 70)])
     blog_title = StringField('博客标题', validators=[DataRequired(), Length(1, 60)])
     blog_sub_title = StringField('博客副标题', validators=[DataRequired(), Length(1, 100)])
-    about = CKEditorField('About Page', validators=[DataRequired()])
-    submit= SubmitField()
+    about = CKEditorField('关于页面', validators=[DataRequired()])
+    submit = SubmitField('更新')
 
 
 class PostForm(FlaskForm):
     """文章表单"""
     title = StringField('标题', validators=[DataRequired(), Length(1, 60)])
     category = SelectField('目录', coerce=int, default=1)
-    body = CKEditorField('内容', validators=[DataRequired()])
-    submit = SubmitField()
+    content = CKEditorField('内容', validators=[DataRequired()])
+    submit = SubmitField('发布')
 
     def __init__(self, *args, **kwargs):
         super(PostForm, self).__init__(*args, **kwargs)
         self.category.choices = [(category.id, category.name)
-                                 for category in Category.query.order_by(category.name).all()]
+                                 for category in Category.query.order_by(Category.name).all()]
 
 
 class CategoryForm(FlaskForm):
@@ -52,7 +52,7 @@ class CommentForm(FlaskForm):
     email = StringField('邮件', validators=[DataRequired(), Email(), Length(1, 254)])
     site = StringField('网站', validators=[Optional(), URL(), Length(0, 255)])
     body = TextAreaField('内容', validators=[DataRequired()])
-    submit = SubmitField()
+    submit = SubmitField('提交')
 
 
 class AdminCommentForm(CommentForm):

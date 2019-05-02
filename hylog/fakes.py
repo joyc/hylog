@@ -22,7 +22,7 @@ def fake_admin():
         name='嗨森',
         about='白天是个邮递员，晚上是个码农，养了条叫斯坦森的狗...'
     )
-    # admin.set_password('admin123')
+    admin.set_password('admin123')
     db.session.add(admin)
     db.session.commit()
 

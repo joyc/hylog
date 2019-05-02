@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% from 'bootstrap/pagination.html' import render_pagination %}
+
+{% block title %}管理评论{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>评论
+            <small class="text-muted">{{ pagination.total }}</small>
+        </h1>
+
+        <ul class="nav nav-pills">
+            <li class="nav-item">
+                <a class="nav-link disabled" href="#">筛选 </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.args.get('filter', '全部') == '全部' %}active{% endif %}"
+                   href="{{ url_for('admin.manage_comment', filter='全部') }}">全部</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.args.get('filter') == '未审核' %}active{% endif %}"
+                   href="{{ url_for('admin.manage_comment', filter='未审核') }}">未审核 {% if unread_comments %}<span
+                        class="badge badge-success">{{ unread_comments }}</span>{% endif %}</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.args.get('filter') == '管理员' %}active{% endif %}"
+                   href="{{ url_for('admin.manage_comment', filter='管理员') }}">管理员回复</a>
+            </li>
+        </ul>
+    </div>
+
+    {% if comments %}
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>序号</th>
+                <th>作者</th>
+                <th>内容</th>
+                <th>日期</th>
+                <th>管理</th>
+            </tr>
+            </thead>
+            {% for comment in comments %}
+                <tr {% if not comment.reviewed %}class="table-warning" {% endif %}>
+                    <td>{{ loop.index + ((pagination.page - 1) * config['HYLOG_COMMENT_PER_PAGE']) }}</td>
+                    <td>
+                        {% if comment.from_admin %}{{ admin.name }}{% else %}{{ comment.author }}{% endif %}<br>
+                        {% if comment.site %}
+                            <a href="{{ comment.site }}" target="_blank">
+                                {{ comment.site }}
+                            </a><br>
+                        {% endif %}
+                        <a href="mailto:{{ comment.email }}">{{ comment.email }}</a>
+
+                        {% if comment.from_admin %}
+                            <span class="badge badge-primary">作者</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ comment.body }}</td>
+                    <td>{{ moment(comment.timestamp).format('LL') }}</td>
+                    <td>
+                        {% if not comment.reviewed %}
+                            <form class="inline" method="post"
+                                  action="{{ url_for('.approve_comment', comment_id=comment.id, next=request.full_path) }}">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                <button type="submit" class="btn btn-success btn-sm">通过</button>
+                            </form>
+                        {% endif %}
+                        <a class="btn btn-info btn-sm" href="{{ url_for('blog.show_post', post_id=comment.post.id) }}">日志</a>
+                        <form class="inline" method="post"
+                              action="{{ url_for('.delete_comment', comment_id=comment.id, next=request.full_path) }}">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                            <button type="submit" class="btn btn-danger btn-sm"
+                                    onclick="return confirm('是否确定删除?');">删除
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+        <div class="page-footer">{{ render_pagination(pagination) }}</div>
+    {% else %}
+        <div class="tip"><h5>没有评论。</h5></div>
+    {% endif %}
+{% endblock %}

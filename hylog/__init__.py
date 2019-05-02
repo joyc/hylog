@@ -1,13 +1,15 @@
 import os
 import click
 from flask import Flask, render_template
+from flask_login import current_user
+from flask_wtf.csrf import CSRFError
 
-from hylog.models import Admin, Category
+from hylog.models import Admin, Post, Category, Comment, Link
 from hylog.blueprints.admin import admin_bp
 from hylog.blueprints.auth import auth_bp
 from hylog.blueprints.blog import blog_bp
 from hylog.settings import config
-from hylog.extensions import bootstrap, db, moment, ckeditor, mail
+from hylog.extensions import bootstrap, db, moment, ckeditor, mail, login_manager, csrf, migrate
 
 basedir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 
@@ -41,6 +43,9 @@ def register_extensions(app):
     moment.init_app(app)
     ckeditor.init_app(app)
     mail.init_app(app)
+    login_manager.init_app(app)
+    csrf.init_app(app)
+    migrate.init_app(app, db)
 
 
 def register_blueprints(app):
@@ -62,7 +67,14 @@ def register_template_context(app):
     def make_template_context():
         admin = Admin.query.first()
         categories = Category.query.order_by(Category.name).all()
-        return dict(admin=admin, categories=categories)
+        links = Link.query.order_by(Link.name).all()
+        if current_user.is_authenticated:
+            unread_comments = Comment.query.filter_by(reviewed=False).count()
+        else:
+            unread_comments = None
+        return dict(
+            admin=admin, categories=categories,
+            links=links, unread_comments=unread_comments)
 
 
 def register_errors(app):
@@ -78,6 +90,10 @@ def register_errors(app):
     def internal_server_error(e):
         return render_template('errors/500.html'), 500
 
+    @app.errorhandler(CSRFError)
+    def handle_csrf_error(e):
+        return render_template('errors/400.html', description=e.description), 400
+
 
 def register_commands(app):
     @app.cli.command()
@@ -90,6 +106,42 @@ def register_commands(app):
             click.echo('删除表.')
         db.create_all()
         click.echo('数据库初始化成功')
+
+    @app.cli.command()
+    @click.option('--username', prompt=True, help='用于登陆的用户名。')
+    @click.option('--password', prompt=True, hide_input=True,
+                  confirmation_prompt=True, help='用于登陆的用户密码。')
+    def init(username, password):
+        """Building hylog, just for you."""
+
+        click.echo('数据初始化...')
+        db.create_all()
+
+        admin = Admin.query.first()
+        if admin is not None:
+            click.echo('管理员已经存在，将执行更新操作')
+            admin.username = username
+            admin.set_password(password)
+        else:
+            click.echo('创建临时管理员账户')
+            admin = Admin(
+                username=username,
+                blog_title='Hylog',
+                blog_sub_title='Just for your life log.',
+                name='Admin',
+                about='Anything about you.'
+            )
+            admin.set_password(password)
+            db.session.add(admin)
+
+        category = Category.query.first()
+        if category is None:
+            click.echo('创建默认分类目录...')
+            category = Category(name='默认')
+            db.session.add(category)
+
+        db.session.commit()
+        click.echo('完成！')
 
     @app.cli.command()
     @click.option('--category', default=10, help='分类目录个数，默认为10个.')

@@ -1,10 +1,10 @@
-{# 导航按钮激活样式，使用bootstrap-flask自带后弃用 #}
+{# 导航按钮激活样式，使用Bootstrap-Flask的render_nav_item宏后弃用 #}
 {% macro nav_link(endpoint, text) -%}
 <li class="nav-item {% if request.endpoint and request.endpoint == endpoint %} active {% endif %}">
     <a href="{{ url_for(endpoint, **kwargs) }}" class="nav-link">{{ text }}</a>
 </li>
 {%- endmacro %}
-{# 分页设置 #}
+{# 分页设置 使用Bootstrap-Flask的render_pagination宏后弃用 #}
 {% macro pager(pagination, fragment='') %}
 <nav aria-label="Page navigation">
     <ul class="pagination">
